@@ -2,6 +2,7 @@ package hu.greencode.nike2tcx;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Charsets;
+import com.google.common.io.Files;
 import hu.greencode.nike2tcx.model.TrackPoint;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -72,8 +73,9 @@ public class NikeDataReader {
         DateTimeFormatter dateStringFormat = DateTimeFormat.forPattern("HH:mm:ss.SSS");
         DateTime duration = dateStringFormat.parseDateTime(durationString);
         result.append("<TotalTimeSeconds>" + duration.getSecondOfDay() + "</TotalTimeSeconds>\n");
-        Double distance = Double.parseDouble((String) ((Map) activityMap.get("metricSummary")).get("distance"));
-        result.append("<DistanceMeters>" + (distance * 1000) + "</DistanceMeters>\n");
+        Double distanceKiloMeter = Double.parseDouble((String) ((Map) activityMap.get("metricSummary")).get("distance"));
+        Double distanceMeter = distanceKiloMeter * 1000;
+        result.append("<DistanceMeters>" + distanceMeter + "</DistanceMeters>\n");
         result.append("<MaximumSpeed>0</MaximumSpeed>\n");
         result.append("<Calories>" + caloriesString + "</Calories>\n");
         result.append("<Intensity>Resting</Intensity>\n");
@@ -88,7 +90,7 @@ public class NikeDataReader {
         result.append("</Activity>\n");
         result.append("</Activities>\n");
         result.append("</TrainingCenterDatabase>");
-        com.google.common.io.Files.write(result.toString(), new File(activityFileName + ".tcx"), Charsets.UTF_8);
+        Files.write(result.toString(), new File(activityFileName + ".tcx"), Charsets.UTF_8);
     }
 
     private void adjustHeartRate() {
@@ -148,7 +150,7 @@ public class NikeDataReader {
                     trackPoints.get(i).setHeartRate(Integer.parseInt((String) values.get(i)));
                 }
                 if (metric.get("metricType").equals("DISTANCE")) {
-                    trackPoints.get(i).setDistanceMeters(Double.parseDouble((String) values.get(i)));
+                    trackPoints.get(i).setDistanceMeters(1000 * Double.parseDouble((String) values.get(i)));
                 }
 
             }

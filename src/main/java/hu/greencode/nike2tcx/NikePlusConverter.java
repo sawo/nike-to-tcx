@@ -13,6 +13,11 @@ public class NikePlusConverter implements CommandLineRunner {
 
     @Override
     public void run(String... strings) throws Exception {
+//        System.out.print("What is your access token? ");
+//        byte[] accessTokenByteArray = new byte[40];
+//        System.in.read(accessTokenByteArray);
+//        String accessToken = new String(accessTokenByteArray);
+
         new NikeDataReader(strings[0]).convert();
     }
 }
