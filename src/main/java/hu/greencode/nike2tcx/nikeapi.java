@@ -1,18 +1,14 @@
 package hu.greencode.nike2tcx;
 
+import hu.greencode.nike2tcx.model.nike.NikeActivity;
+import hu.greencode.nike2tcx.model.nike.NikeActivityGpsData;
+
 import java.util.List;
 
-/**
- * Created with IntelliJ IDEA.
- * User: sanyi
- * Date: 07/04/16
- * Time: 14:48
- * To change this template use File | Settings | File Templates.
- */
 public interface NikeApi {
-    List<NikeActivity> getActivities(String activity);
+    List<NikeActivity> getActivities(int offset, int pageSize);
 
     NikeActivity getActivity(String activityId);
 
-    NikeGPSData getGPSData(String activityId);
+    NikeActivityGpsData getGPSData(String activityId);
 }

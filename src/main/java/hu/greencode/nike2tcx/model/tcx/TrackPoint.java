@@ -1,11 +1,7 @@
-package hu.greencode.nike2tcx.model;
+package hu.greencode.nike2tcx.model.tcx;
 
-import com.sun.org.apache.xalan.internal.lib.Extensions;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
-
-import java.text.SimpleDateFormat;
 
 public class TrackPoint {
 
@@ -19,10 +15,6 @@ public class TrackPoint {
 
     public TrackPoint() {
 
-    }
-
-    public TrackPoint(int position) {
-        this.position = position;
     }
 
     public DateTime getTime() {

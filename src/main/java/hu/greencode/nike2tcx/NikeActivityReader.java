@@ -3,7 +3,7 @@ package hu.greencode.nike2tcx;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
-import hu.greencode.nike2tcx.model.TrackPoint;
+import hu.greencode.nike2tcx.model.tcx.TrackPoint;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -15,7 +15,7 @@ import java.util.Map;
 
 import static com.google.common.collect.Lists.newArrayList;
 
-public class NikeDataReader {
+public class NikeActivityReader {
 
     private Map<String, Object> activityMap;
 
@@ -27,7 +27,7 @@ public class NikeDataReader {
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
-    public NikeDataReader(String activityFileName) {
+    public NikeActivityReader(String activityFileName) {
         this.activityFileName = activityFileName;
     }
 
