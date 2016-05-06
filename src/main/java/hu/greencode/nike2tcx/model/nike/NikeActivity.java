@@ -103,4 +103,18 @@ public class NikeActivity {
     public void setIsGpsActivity(boolean gpsActivity) {
         isGpsActivity = gpsActivity;
     }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("NikeActivity{");
+        sb.append("activityId='").append(activityId).append('\'');
+        sb.append(", activityType='").append(activityType).append('\'');
+        sb.append(", startTime=").append(startTime);
+        sb.append(", status='").append(status).append('\'');
+        sb.append(", deviceType='").append(deviceType).append('\'');
+        sb.append(", tags=").append(tags);
+        sb.append(", isGpsActivity=").append(isGpsActivity);
+        sb.append('}');
+        return sb.toString();
+    }
 }

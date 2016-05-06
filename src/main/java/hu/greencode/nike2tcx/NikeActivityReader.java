@@ -1,8 +1,9 @@
 package hu.greencode.nike2tcx;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
+import hu.greencode.nike2tcx.model.nike.Metric;
+import hu.greencode.nike2tcx.model.nike.NikeActivity;
 import hu.greencode.nike2tcx.model.tcx.TrackPoint;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -10,45 +11,22 @@ import org.joda.time.format.DateTimeFormatter;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.List;
-import java.util.Map;
 
 import static com.google.common.collect.Lists.newArrayList;
 
 public class NikeActivityReader {
 
-    private Map<String, Object> activityMap;
-
-    private DateTime startTime;
-
     private List<TrackPoint> trackPoints;
 
-    private final String activityFileName;
+    private NikeActivity nikeActivity;
 
-    private ObjectMapper objectMapper = new ObjectMapper();
-
-    public NikeActivityReader(String activityFileName) {
-        this.activityFileName = activityFileName;
-    }
-
-    public DateTime getStartTime() {
-        return startTime;
-    }
-
-    public void setStartTime(DateTime startTime) {
-        this.startTime = startTime;
-    }
-
-    public List<TrackPoint> getTrackPoints() {
-        return trackPoints;
-    }
-
-    public void setTrackPoints(List<TrackPoint> trackPoints) {
-        this.trackPoints = trackPoints;
+    public NikeActivityReader(NikeActivity nikeActivity) {
+        this.nikeActivity = nikeActivity;
     }
 
     public void convert() throws IOException {
-        readJSONs();
         process();
         print();
         adjustHeartRate();
@@ -65,19 +43,17 @@ public class NikeActivityReader {
                 "    <Folders/>");
         result.append("<Activities>\n");
         result.append("<Activity Sport=\"Running\">\n");
-        String date =  DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'").print(startTime);
-        result.append("<Id>" + date + "</Id>\n");
-        result.append("<Lap StartTime=\"" + date + "\">\n");
-        String durationString = (String) ((Map) activityMap.get("metricSummary")).get("duration");
-        String caloriesString = (String) ((Map) activityMap.get("metricSummary")).get("calories");
-        DateTimeFormatter dateStringFormat = DateTimeFormat.forPattern("HH:mm:ss.SSS");
-        DateTime duration = dateStringFormat.parseDateTime(durationString);
+        String startDate = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'").print(new DateTime(nikeActivity.getStartTime()));
+        result.append("<Id>" + startDate + "</Id>\n");
+        result.append("<Lap StartTime=\"" + startDate + "\">\n");
+        DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("HH:mm:ss.SSS");
+        DateTime duration = dateTimeFormatter.parseDateTime(nikeActivity.getMetricSummary().getDuration());
         result.append("<TotalTimeSeconds>" + duration.getSecondOfDay() + "</TotalTimeSeconds>\n");
-        Double distanceKiloMeter = Double.parseDouble((String) ((Map) activityMap.get("metricSummary")).get("distance"));
+        Double distanceKiloMeter = Double.parseDouble(nikeActivity.getMetricSummary().getDistance());
         Double distanceMeter = distanceKiloMeter * 1000;
         result.append("<DistanceMeters>" + distanceMeter + "</DistanceMeters>\n");
         result.append("<MaximumSpeed>0</MaximumSpeed>\n");
-        result.append("<Calories>" + caloriesString + "</Calories>\n");
+        result.append("<Calories>" + nikeActivity.getMetricSummary().getCalories() + "</Calories>\n");
         result.append("<Intensity>Resting</Intensity>\n");
         result.append("<Cadence>0</Cadence>\n");
         result.append("<TriggerMethod>Manual</TriggerMethod>\n");
@@ -90,7 +66,10 @@ public class NikeActivityReader {
         result.append("</Activity>\n");
         result.append("</Activities>\n");
         result.append("</TrainingCenterDatabase>");
-        Files.write(result.toString(), new File(activityFileName + ".tcx"), Charsets.UTF_8);
+        final SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-M-dd");
+        final String tcxFileName = dateFormatter.format(nikeActivity.getStartTime()) + "-" +
+                nikeActivity.getActivityId() + ".tcx";
+        Files.write(result.toString(), new File(tcxFileName), Charsets.UTF_8);
     }
 
     private void adjustHeartRate() {
@@ -128,29 +107,24 @@ public class NikeActivityReader {
         return -1;
     }
 
-    private void readJSONs() throws IOException {
-        activityMap = objectMapper.readValue(new File(activityFileName), Map.class);
-    }
-
     private void process() {
-        startTime = new DateTime(activityMap.get("startTime"));
-        final List<Map> metrics = (List<Map>) activityMap.get("metrics");
-        for (Map metric : metrics) {
-            if (metric.get("metricType").equals("FUEL")) {
+        for (Metric metric : nikeActivity.getMetrics()) {
+
+            if (metric.getMetricType().equals("FUEL")) {
                 continue;
             }
-            List<Object> values = (List<Object>) metric.get("values");
-            for (int i = 0; i < values.size(); i++) {
+
+            for (int i = 0; i < metric.getValues().size(); i++) {
                 if (trackPoints == null) {
-                    initTrackPointList(startTime, 10, values.size());
+                    initTrackPointList(new DateTime(nikeActivity.getStartTime()), 10, metric.getValues().size());
                 }
             }
-            for (int i = 0; i < values.size(); i++) {
-                if (metric.get("metricType").equals("HEARTRATE")) {
-                    trackPoints.get(i).setHeartRate(Integer.parseInt((String) values.get(i)));
+            for (int i = 0; i < metric.getValues().size(); i++) {
+                if (metric.getMetricType().equals("HEARTRATE")) {
+                    trackPoints.get(i).setHeartRate(Integer.parseInt(metric.getValues().get(i)));
                 }
-                if (metric.get("metricType").equals("DISTANCE")) {
-                    trackPoints.get(i).setDistanceMeters(1000 * Double.parseDouble((String) values.get(i)));
+                if (metric.getMetricType().equals("DISTANCE")) {
+                    trackPoints.get(i).setDistanceMeters(1000 * Double.parseDouble(metric.getValues().get(i)));
                 }
 
             }

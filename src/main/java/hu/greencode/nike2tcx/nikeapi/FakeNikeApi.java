@@ -1,6 +1,7 @@
-package hu.greencode.nike2tcx;
+package hu.greencode.nike2tcx.nikeapi;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import hu.greencode.nike2tcx.NikeApi;
 import hu.greencode.nike2tcx.model.nike.NikeActivity;
 import hu.greencode.nike2tcx.model.nike.NikeActivityGpsData;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,11 +14,17 @@ import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
 
-@Component
+//@Component
 public class FakeNikeApi implements NikeApi {
 
     @Autowired
-    private ObjectMapper objectMapper;
+    private ObjectMapper objectMapper = new ObjectMapper();
+
+    @Override
+    public void setAccessToken(String accessToken) {
+        // noop
+    }
+
     @Override
     public List<NikeActivity> getActivities(int offset, int pageSize) {
         List<NikeActivity> nikeActivities = newArrayList();

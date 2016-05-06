@@ -1,5 +1,11 @@
 package hu.greencode.nike2tcx.config;
 
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
+
+@Component
+@ConfigurationProperties
 public class ApplicationProperties {
     private int timeout;
     private String proxyHost;

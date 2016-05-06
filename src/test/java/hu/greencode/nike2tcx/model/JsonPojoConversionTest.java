@@ -27,7 +27,7 @@ public class JsonPojoConversionTest {
         final NikeActivity nikeActivity = objectMapper.readValue(nikeActivityJsonFile, NikeActivity.class);
         assertEquals(nikeActivity.getActivityId(), "1496000000019182126950000003739174189805");
         assertEquals(nikeActivity.getActivityType(), "RUN");
-        final DateTime expectedStartTime = new DateTime(2016,3,2,6,41,44);
+        final DateTime expectedStartTime = new DateTime(2016,3,2,7,41,44);
         assertEquals(nikeActivity.getStartTime(),expectedStartTime.toDate());
         assertEquals(nikeActivity.getActivityTimeZone(),"Africa/Algiers");
         assertEquals(nikeActivity.getStatus(), "COMPLETE");
