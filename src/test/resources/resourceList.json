@@ -1,0 +1,274 @@
+{
+    "data": [
+        {
+            "links": [
+                {
+                    "rel": "self",
+                    "href": "https://api.nike.com/v1/me/sport/activities/8657000000014005654650005436475470066446"
+                }
+            ],
+            "activityId": "8657000000014005654650005436475470066446",
+            "activityType": "RUN",
+            "startTime": "2016-05-08T13:42:35Z",
+            "activityTimeZone": "ART",
+            "status": "COMPLETE",
+            "deviceType": "SPORTWATCH",
+            "metricSummary": {
+                "calories": "397",
+                "fuel": "843",
+                "distance": "3.5229",
+                "steps": "0",
+                "duration": "0:28:27.000"
+            },
+            "tags": [
+            ],
+            "metrics": [
+            ]
+        },
+        {
+            "links": [
+                {
+                    "rel": "self",
+                    "href": "https://api.nike.com/v1/me/sport/activities/98211e6f-a36e-4921-bcb9-f27769abfbbd"
+                }
+            ],
+            "activityId": "98211e6f-a36e-4921-bcb9-f27769abfbbd",
+            "activityType": "ALL_DAY",
+            "startTime": "2016-05-07T22:00:00Z",
+            "activityTimeZone": "ART",
+            "status": "NONE",
+            "deviceType": "SPORTWATCH",
+            "metricSummary": {
+                "calories": "0",
+                "fuel": "843",
+                "distance": "0.0",
+                "steps": "0",
+                "duration": "0:00:00.000"
+            },
+            "tags": [
+            ],
+            "metrics": [
+            ]
+        },
+        {
+            "links": [
+                {
+                    "rel": "self",
+                    "href": "https://api.nike.com/v1/me/sport/activities/1458000000011789087780005436286483616934"
+                }
+            ],
+            "activityId": "1458000000011789087780005436286483616934",
+            "activityType": "RUN",
+            "startTime": "2016-05-06T06:50:15Z",
+            "activityTimeZone": "ART",
+            "status": "COMPLETE",
+            "deviceType": "SPORTWATCH",
+            "metricSummary": {
+                "calories": "960",
+                "fuel": "2394",
+                "distance": "9.3967",
+                "steps": "0",
+                "duration": "1:06:43.000"
+            },
+            "tags": [
+            ],
+            "metrics": [
+            ]
+        },
+        {
+            "links": [
+                {
+                    "rel": "self",
+                    "href": "https://api.nike.com/v1/me/sport/activities/4417c75d-9f27-4991-a859-a638e600d728"
+                }
+            ],
+            "activityId": "4417c75d-9f27-4991-a859-a638e600d728",
+            "activityType": "ALL_DAY",
+            "startTime": "2016-05-05T22:00:00Z",
+            "activityTimeZone": "ART",
+            "status": "NONE",
+            "deviceType": "SPORTWATCH",
+            "metricSummary": {
+                "calories": "0",
+                "fuel": "2394",
+                "distance": "0.0",
+                "steps": "0",
+                "duration": "0:00:00.000"
+            },
+            "tags": [
+            ],
+            "metrics": [
+            ]
+        },
+        {
+            "links": [
+                {
+                    "rel": "self",
+                    "href": "https://api.nike.com/v1/me/sport/activities/4063000000005518478100005436012007926832"
+                }
+            ],
+            "activityId": "4063000000005518478100005436012007926832",
+            "activityType": "RUN",
+            "startTime": "2016-05-03T19:45:41Z",
+            "activityTimeZone": "ART",
+            "status": "COMPLETE",
+            "deviceType": "SPORTWATCH",
+            "metricSummary": {
+                "calories": "68",
+                "fuel": "3327",
+                "distance": "13.9839",
+                "steps": "0",
+                "duration": "1:58:14.000"
+            },
+            "tags": [
+            ],
+            "metrics": [
+            ]
+        },
+        {
+            "links": [
+                {
+                    "rel": "self",
+                    "href": "https://api.nike.com/v1/me/sport/activities/7977420f-c953-47b1-a96c-be175f98e1a5"
+                }
+            ],
+            "activityId": "7977420f-c953-47b1-a96c-be175f98e1a5",
+            "activityType": "ALL_DAY",
+            "startTime": "2016-05-02T22:00:00Z",
+            "activityTimeZone": "ART",
+            "status": "NONE",
+            "deviceType": "SPORTWATCH",
+            "metricSummary": {
+                "calories": "0",
+                "fuel": "3327",
+                "distance": "0.0",
+                "steps": "0",
+                "duration": "0:00:00.000"
+            },
+            "tags": [
+            ],
+            "metrics": [
+            ]
+        },
+        {
+            "links": [
+                {
+                    "rel": "self",
+                    "href": "https://api.nike.com/v1/me/sport/activities/2102000000019642732600003362905023542234"
+                }
+            ],
+            "activityId": "2102000000019642732600003362905023542234",
+            "activityType": "RUN",
+            "startTime": "2016-05-01T20:06:49Z",
+            "activityTimeZone": "ART",
+            "status": "COMPLETE",
+            "deviceType": "SPORTWATCH",
+            "metricSummary": {
+                "calories": "1004",
+                "fuel": "2007",
+                "distance": "8.9173002243042",
+                "steps": "0",
+                "duration": "1:19:03.000"
+            },
+            "tags": [
+                {
+                    "tagType": "WEATHER",
+                    "tagValue": "RAINY"
+                },
+                {
+                    "tagType": "SHOES",
+                    "tagValue": "NikeLunarglide4"
+                }
+            ],
+            "metrics": [
+            ]
+        },
+        {
+            "links": [
+                {
+                    "rel": "self",
+                    "href": "https://api.nike.com/v1/me/sport/activities/1438809d-1e71-4248-8b68-1cea0ac14c8e"
+                }
+            ],
+            "activityId": "1438809d-1e71-4248-8b68-1cea0ac14c8e",
+            "activityType": "ALL_DAY",
+            "startTime": "2016-04-30T22:00:00Z",
+            "activityTimeZone": "ART",
+            "status": "IN_PROGRESS",
+            "deviceType": "SPORTWATCH",
+            "metricSummary": {
+                "calories": "0",
+                "fuel": "2007",
+                "distance": "0.0",
+                "steps": "0",
+                "duration": "0:00:00.000"
+            },
+            "tags": [
+            ],
+            "metrics": [
+            ]
+        },
+        {
+            "links": [
+                {
+                    "rel": "self",
+                    "href": "https://api.nike.com/v1/me/sport/activities/2102000000011029525380003362905023542233"
+                }
+            ],
+            "activityId": "2102000000011029525380003362905023542233",
+            "activityType": "RUN",
+            "startTime": "2016-04-30T19:28:45Z",
+            "activityTimeZone": "ART",
+            "status": "COMPLETE",
+            "deviceType": "SPORTWATCH",
+            "metricSummary": {
+                "calories": "716",
+                "fuel": "1452",
+                "distance": "6.249899864196777",
+                "steps": "0",
+                "duration": "0:50:04.000"
+            },
+            "tags": [
+                {
+                    "tagType": "INTENSITY",
+                    "tagValue": "EASY"
+                },
+                {
+                    "tagType": "EMOTION",
+                    "tagValue": "GREAT"
+                }
+            ],
+            "metrics": [
+            ]
+        },
+        {
+            "links": [
+                {
+                    "rel": "self",
+                    "href": "https://api.nike.com/v1/me/sport/activities/238d709f-2b6e-4846-864c-64ec587cc93d"
+                }
+            ],
+            "activityId": "238d709f-2b6e-4846-864c-64ec587cc93d",
+            "activityType": "ALL_DAY",
+            "startTime": "2016-04-29T22:00:00Z",
+            "activityTimeZone": "ART",
+            "status": "IN_PROGRESS",
+            "deviceType": "SPORTWATCH",
+            "metricSummary": {
+                "calories": "0",
+                "fuel": "1452",
+                "distance": "0.0",
+                "steps": "0",
+                "duration": "0:00:00.000"
+            },
+            "tags": [
+            ],
+            "metrics": [
+            ]
+        }
+    ],
+    "paging": {
+        "next": "/v1/me/sport/activities?count=10&offset=11&access_token=FMgPamBRj5CXWf59v15XwuTN1fQr",
+        "previous": null
+    }
+}

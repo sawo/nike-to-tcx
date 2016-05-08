@@ -31,7 +31,7 @@ public class Nike2Tcx implements CommandLineRunner {
         final String accessToken = new String(accessTokenByteArray).trim();
         nikeApi.setAccessToken(accessToken);
         System.out.println("Retrieving the most recent runs ...");
-        List<NikeActivity> activities = nikeApi.getActivities(0, 10);
+        List<NikeActivity> activities = nikeApi.getActivities(1, 10);
         for (int i = 0; i < activities.size(); i++) {
             System.out.println(i + ". " + activities.get(i));
         }

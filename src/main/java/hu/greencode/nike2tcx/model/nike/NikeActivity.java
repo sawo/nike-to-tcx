@@ -12,7 +12,7 @@ public class NikeActivity {
     private String status;
     private String deviceType;
     private MetricSummary metricSummary;
-    private List<String> tags;
+    private List<Tag> tags;
     private List<Metric> metrics;
     private boolean isGpsActivity;
 
@@ -80,11 +80,11 @@ public class NikeActivity {
         this.metricSummary = metricSummary;
     }
 
-    public List<String> getTags() {
+    public List<Tag> getTags() {
         return tags;
     }
 
-    public void setTags(List<String> tags) {
+    public void setTags(List<Tag> tags) {
         this.tags = tags;
     }
 

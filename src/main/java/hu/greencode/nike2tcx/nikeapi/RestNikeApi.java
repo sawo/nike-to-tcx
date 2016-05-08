@@ -13,9 +13,7 @@ import java.util.List;
 @Component
 public class RestNikeApi implements NikeApi {
 
-
-    @Autowired
-    private RestTemplate restTemplate;
+    private RestTemplate restTemplate = new RestTemplate();
 
     private String accessToken;
 

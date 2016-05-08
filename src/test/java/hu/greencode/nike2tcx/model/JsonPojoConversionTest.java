@@ -1,6 +1,7 @@
 package hu.greencode.nike2tcx.model;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import hu.greencode.nike2tcx.model.nike.NikeActivities;
 import hu.greencode.nike2tcx.model.nike.NikeActivity;
 import hu.greencode.nike2tcx.model.nike.NikeActivityGpsData;
 import org.joda.time.DateTime;
@@ -53,6 +54,14 @@ public class JsonPojoConversionTest {
         assertEquals(nikeActivityGpsData.getWaypoints().get(0).getLatitude().doubleValue(), 47.50967d, 0d);
         assertEquals(nikeActivityGpsData.getWaypoints().get(0).getLongitude().doubleValue(), 19.11572, 0d);
         assertEquals(nikeActivityGpsData.getWaypoints().get(0).getElevation().doubleValue(), 110.4597, 0d);
+
+    }
+
+    @Test
+    public void testNikeActivityListDataModel() throws IOException {
+        final File nikeActivityGpsDataJsonFile = new ClassPathResource("resourceList.json").getFile();
+        final NikeActivities nikeActivities =
+                objectMapper.readValue(nikeActivityGpsDataJsonFile, NikeActivities.class);
 
     }
 
