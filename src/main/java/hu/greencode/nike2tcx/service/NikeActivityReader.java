@@ -1,4 +1,4 @@
-package hu.greencode.nike2tcx;
+package hu.greencode.nike2tcx.service;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;

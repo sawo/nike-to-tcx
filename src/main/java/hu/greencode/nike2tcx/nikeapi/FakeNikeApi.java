@@ -1,12 +1,10 @@
 package hu.greencode.nike2tcx.nikeapi;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import hu.greencode.nike2tcx.NikeApi;
 import hu.greencode.nike2tcx.model.nike.NikeActivity;
 import hu.greencode.nike2tcx.model.nike.NikeActivityGpsData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.IOException;

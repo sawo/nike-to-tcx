@@ -1,16 +1,15 @@
-package hu.greencode.nike2tcx.nikeapi;
+package hu.greencode.nike2tcx;
 
-import hu.greencode.nike2tcx.NikeActivityReader;
-import hu.greencode.nike2tcx.NikeApi;
 import hu.greencode.nike2tcx.model.nike.NikeActivity;
+import hu.greencode.nike2tcx.nikeapi.NikeApi;
+import hu.greencode.nike2tcx.service.NikeActivityReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.List;
 
 @SpringBootApplication
@@ -32,6 +31,13 @@ public class Nike2Tcx implements CommandLineRunner {
         nikeApi.setAccessToken(accessToken);
         System.out.println("Retrieving the most recent runs ...");
         List<NikeActivity> activities = nikeApi.getActivities(1, 10);
+        final Iterator<NikeActivity> iterator = activities.iterator();
+        while (iterator.hasNext()) {
+            NikeActivity activity = iterator.next();
+            if (!activity.getActivityType().equals("RUN")) {
+                iterator.remove();
+            }
+        }
         for (int i = 0; i < activities.size(); i++) {
             System.out.println(i + ". " + activities.get(i));
         }

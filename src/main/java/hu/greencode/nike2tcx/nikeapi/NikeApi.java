@@ -1,4 +1,4 @@
-package hu.greencode.nike2tcx;
+package hu.greencode.nike2tcx.nikeapi;
 
 import hu.greencode.nike2tcx.model.nike.NikeActivity;
 import hu.greencode.nike2tcx.model.nike.NikeActivityGpsData;
