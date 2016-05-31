@@ -18,7 +18,7 @@ public class Nike2Tcx implements CommandLineRunner {
     @Autowired
     private NikeApi nikeApi;
 
-    public static void main(String[] args)  {
+    public static void main(String[] args) {
         new SpringApplicationBuilder().web(false).sources(Nike2Tcx.class).showBanner(false).run(args);
     }
 
@@ -31,19 +31,30 @@ public class Nike2Tcx implements CommandLineRunner {
         nikeApi.setAccessToken(accessToken);
         System.out.println("Retrieving the most recent runs ...");
         List<NikeActivity> activities = nikeApi.getActivities(1, 10);
-        final Iterator<NikeActivity> iterator = activities.iterator();
-        while (iterator.hasNext()) {
-            NikeActivity activity = iterator.next();
-            if (!activity.getActivityType().equals("RUN")) {
-                iterator.remove();
+
+        while (true) {
+            final Iterator<NikeActivity> iterator = activities.iterator();
+            while (iterator.hasNext()) {
+                NikeActivity activity = iterator.next();
+                if (!activity.getActivityType().equals("RUN")) {
+                    iterator.remove();
+                }
             }
+            System.out.println("\nSelect an activity from the list below: ");
+            for (int i = 0; i < activities.size(); i++) {
+                System.out.println(i + ". " + activities.get(i));
+            }
+            int selectedActivityPosition;
+            try {
+                selectedActivityPosition = getSelectedActivityFromUser(activities.size());
+            } catch (NumberFormatException e) {
+                System.out.println("Thank you for using. Have a nice running!");
+                break;
+            }
+            NikeActivity selectedActivity = nikeApi.getActivity(activities.get(selectedActivityPosition).getActivityId());
+            new NikeActivityReader(selectedActivity).convert();
+            activities.remove(selectedActivityPosition);
         }
-        for (int i = 0; i < activities.size(); i++) {
-            System.out.println(i + ". " + activities.get(i));
-        }
-        int selectedActivityPosition = getSelectedActivityFromUser(activities.size());
-        NikeActivity selectedActivity = nikeApi.getActivity(activities.get(selectedActivityPosition).getActivityId());
-        new NikeActivityReader(selectedActivity).convert();
     }
 
     private int getSelectedActivityFromUser(int numberOfActivities) throws IOException {
