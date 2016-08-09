@@ -4,10 +4,13 @@ import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 import hu.greencode.nike2tcx.model.nike.Metric;
 import hu.greencode.nike2tcx.model.nike.NikeActivity;
+import hu.greencode.nike2tcx.model.tcx.Lap;
 import hu.greencode.nike2tcx.model.tcx.TrackPoint;
 import org.joda.time.DateTime;
+import org.joda.time.Duration;
 import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.PeriodFormatter;
+import org.joda.time.format.PeriodFormatterBuilder;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,7 +21,13 @@ import static com.google.common.collect.Lists.newArrayList;
 
 public class NikeActivityReader {
 
+    // intentionally left as null
     private List<TrackPoint> trackPoints;
+
+    private List<Duration> lapDurations = newArrayList();
+    private List<DateTime> lapStartTimes = newArrayList();
+
+    private List<Lap> laps = newArrayList();
 
     private NikeActivity nikeActivity;
 
@@ -28,10 +37,92 @@ public class NikeActivityReader {
 
     public void convert() throws IOException {
         process();
-        print();
+        readLapData();
         adjustHeartRate();
-        print();
         generateXml();
+    }
+
+    private void readLapData() throws IOException {
+        System.out.print("Number of laps: ");
+        byte[] numberOfLapsByteArray = new byte[40];
+        System.in.read(numberOfLapsByteArray);
+        int numberOfLaps = Integer.parseInt(new String(numberOfLapsByteArray).trim());
+
+        if (numberOfLaps < 1) {
+            throw new IOException("Number of laps cannot be less than 1: " + numberOfLaps);
+        }
+
+        if (numberOfLaps > 1) {
+            for (int i = 0; i < numberOfLaps; i++) {
+                byte[] lapTimeByteArray = new byte[40];
+                System.out.print("What is the " + (i + 1) + ". lap's duration? [mm:ss] : ");
+                System.in.read(lapTimeByteArray);
+                PeriodFormatter formatter = new PeriodFormatterBuilder()
+                                                .appendMinutes()
+                                                .appendLiteral(":")
+                                                .appendSeconds()
+                                                .toFormatter();
+                final Duration lapDuration = formatter.parsePeriod(new String(lapTimeByteArray).trim()).toStandardDuration();
+                lapDurations.add(lapDuration);
+            }
+        }
+        if (lapDurations.size() == 0) {
+            final String durationString = nikeActivity.getMetricSummary().getDuration();
+            PeriodFormatter formatter = new PeriodFormatterBuilder()
+                                            .appendHours()
+                                            .appendLiteral(":")
+                                            .appendMinutes()
+                                            .appendLiteral(":")
+                                            .appendSeconds()
+                                            .appendLiteral(".")
+                                            .appendMillis3Digit()
+                                            .toFormatter();
+
+            lapDurations.add(formatter.parsePeriod(durationString).toStandardDuration());
+        }
+
+        lapStartTimes = convertLapDurationsToLapStartTimes(lapDurations);
+        // one lap only ...
+        if (lapStartTimes.size() == 2) {
+            Lap lap = new Lap();
+            lap.setTrackPoints(trackPoints);
+            laps.add(lap);
+        }
+
+        // multiple laps ...
+        int
+            lastUsedTrackPointIndex = 0;
+        for (int lapStartTimeIndex = 0; lapStartTimeIndex < lapStartTimes.size() - 1; lapStartTimeIndex++) {
+            DateTime lapStartTime = lapStartTimes.get(lapStartTimeIndex);
+            DateTime nextLapStartTime = lapStartTimes.get(lapStartTimeIndex + 1);
+            Lap lap = new Lap();
+            List<TrackPoint> trackPointsOfLap = newArrayList();
+            for (int trackPointIntex = 0; trackPointIntex < trackPoints.size(); trackPointIntex++) {
+                  TrackPoint trackPoint = trackPoints.get(lapStartTimeIndex);
+                if ( ( trackPoint.getTime().isAfter(lapStartTime) || trackPoint.getTime().isEqual(lapStartTime)) &&
+                     ( trackPoint.getTime().isBefore(nextLapStartTime) || trackPoint.getTime().isEqual(nextLapStartTime) ) ) {
+                    trackPointsOfLap.add(trackPoint);
+                    lastUsedTrackPointIndex = trackPointIntex;
+                }
+            }
+            lap.setTrackPoints(trackPointsOfLap);
+            laps.add(lap);
+        }
+        System.out.println("lap size: " + laps.size());
+
+    }
+
+    private List<DateTime> convertLapDurationsToLapStartTimes(List<Duration> lapDurations) {
+        List<DateTime> lapStartTimes = newArrayList();
+        DateTime activityStartTime = new DateTime(nikeActivity.getStartTime());
+        lapStartTimes.add(activityStartTime);
+
+        for (int i = 0; i < lapDurations.size(); i++) {
+            DateTime previousLapStartTime = lapStartTimes.get(i);
+            Duration duration = lapDurations.get(i);
+            lapStartTimes.add(previousLapStartTime.plusMillis((int) duration.getMillis()));
+        }
+        return lapStartTimes;
     }
 
     private void generateXml() throws IOException {
@@ -43,26 +134,18 @@ public class NikeActivityReader {
                 "    <Folders/>");
         result.append("<Activities>\n");
         result.append("<Activity Sport=\"Running\">\n");
-        String startDate = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'").print(new DateTime(nikeActivity.getStartTime()));
-        result.append("<Id>" + startDate + "</Id>\n");
-        result.append("<Lap StartTime=\"" + startDate + "\">\n");
-        DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("HH:mm:ss.SSS");
-        DateTime duration = dateTimeFormatter.parseDateTime(nikeActivity.getMetricSummary().getDuration());
-        result.append("<TotalTimeSeconds>" + duration.getSecondOfDay() + "</TotalTimeSeconds>\n");
-        Double distanceKiloMeter = Double.parseDouble(nikeActivity.getMetricSummary().getDistance());
-        Double distanceMeter = distanceKiloMeter * 1000;
-        result.append("<DistanceMeters>" + distanceMeter + "</DistanceMeters>\n");
-        result.append("<MaximumSpeed>0</MaximumSpeed>\n");
-        result.append("<Calories>" + nikeActivity.getMetricSummary().getCalories() + "</Calories>\n");
-        result.append("<Intensity>Resting</Intensity>\n");
-        result.append("<Cadence>0</Cadence>\n");
-        result.append("<TriggerMethod>Manual</TriggerMethod>\n");
-        result.append("<Track>\n");
-        for (TrackPoint trackPoint : trackPoints) {
-            result.append(trackPoint.toXML());
+        String activityStartTime = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'").print(new DateTime(nikeActivity.getStartTime()));
+        result.append("<Id>" + activityStartTime + "</Id>\n");
+        for (Lap lap : laps) {
+            String lapStartTime = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'").print(lap.getStartTime());
+            result.append("<Lap StartTime=\"" + lapStartTime + "\">\n");
+            result.append("<Track>\n");
+            for (TrackPoint trackPoint : lap.getTrackPoints()) {
+                result.append(trackPoint.toXML());
+            }
+            result.append("</Track>\n");
+            result.append("</Lap>\n");
         }
-        result.append("</Track>\n");
-        result.append("</Lap>\n");
         result.append("</Activity>\n");
         result.append("</Activities>\n");
         result.append("</TrainingCenterDatabase>");
