@@ -13,7 +13,7 @@ public class AccessTokenHunter {
 
     public AccessToken hunt() {
         RestTemplate restTemplate = new RestTemplate();
-        String request = "username=sanyi%40inlineskate.hu&password=Fikalacika6";
+        String request = "username=sanyi%40inlineskate.hu&password=";
 //        restTemplate.
 //        return restTemplate.postForObject("https://developer.nike.com/services/login", request, AccessToken.class);
         return null;
