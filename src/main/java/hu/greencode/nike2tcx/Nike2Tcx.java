@@ -1,6 +1,7 @@
 package hu.greencode.nike2tcx;
 
 import hu.greencode.nike2tcx.model.nike.NikeActivity;
+import hu.greencode.nike2tcx.model.nike.NikeActivityGpsData;
 import hu.greencode.nike2tcx.nikeapi.NikeApi;
 import hu.greencode.nike2tcx.service.NikeActivityReader;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,8 +52,11 @@ public class Nike2Tcx implements CommandLineRunner {
                 System.out.println("Thank you for using. Have a nice running!");
                 break;
             }
-            NikeActivity selectedActivity = nikeApi.getActivity(activities.get(selectedActivityPosition).getActivityId());
-            new NikeActivityReader(selectedActivity).convert();
+            String selectedActivityId = activities.get(selectedActivityPosition).getActivityId();
+            NikeActivity selectedActivity = nikeApi.getActivity(selectedActivityId);
+            NikeActivityGpsData gpsData =
+                selectedActivity.isIsGpsActivity() ? nikeApi.getGPSData(selectedActivityId) : null;
+            new NikeActivityReader(selectedActivity, gpsData).convert();
             activities.remove(selectedActivityPosition);
         }
     }

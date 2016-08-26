@@ -4,6 +4,8 @@ import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 import hu.greencode.nike2tcx.model.nike.Metric;
 import hu.greencode.nike2tcx.model.nike.NikeActivity;
+import hu.greencode.nike2tcx.model.nike.NikeActivityGpsData;
+import hu.greencode.nike2tcx.model.nike.Waypoint;
 import hu.greencode.nike2tcx.model.tcx.Lap;
 import hu.greencode.nike2tcx.model.tcx.TrackPoint;
 import org.joda.time.DateTime;
@@ -21,7 +23,8 @@ import static com.google.common.collect.Lists.newArrayList;
 
 public class NikeActivityReader {
 
-    // intentionally left as null
+    private final NikeActivity nikeActivity;
+    private final NikeActivityGpsData gpsData;
     private List<TrackPoint> trackPoints;
 
     private List<Duration> lapDurations = newArrayList();
@@ -29,17 +32,52 @@ public class NikeActivityReader {
 
     private List<Lap> laps = newArrayList();
 
-    private NikeActivity nikeActivity;
 
-    public NikeActivityReader(NikeActivity nikeActivity) {
+    public NikeActivityReader(NikeActivity nikeActivity, NikeActivityGpsData gpsData) {
         this.nikeActivity = nikeActivity;
+        this.gpsData = gpsData;
     }
 
     public void convert() throws IOException {
         process();
         readLapData();
         adjustHeartRate();
+        addGPSData();
         generateXml();
+    }
+
+    private void addGPSData() {
+        if (gpsData != null) {
+            List<Double> distanceMeters = newArrayList();
+            List<Waypoint> waypoints = gpsData.getWaypoints();
+            for (int i = 0; i < waypoints.size(); i++) {
+                if (i == 0) {
+                    distanceMeters.add(0d);
+                    continue;
+                }
+                    distanceMeters.add(calculateDistanceSinceLastGPSPosition(waypoints.get(i - 1), waypoints.get(i)));
+
+            }
+            System.out.println();
+        }
+
+    }
+
+    private Double calculateDistanceSinceLastGPSPosition(Waypoint waypoint1, Waypoint waypoint2) {
+        final Double lat1 = waypoint1.getLatitude();
+        final Double lat2 = waypoint2.getLatitude();
+        final Double lng1 = waypoint1.getLongitude();
+        final Double lng2 = waypoint2.getLongitude();
+        double earthRadius = 6371000; //meters
+        double dLat = Math.toRadians(lat2-lat1);
+        double dLng = Math.toRadians(lng2-lng1);
+        double a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                   Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) *
+                   Math.sin(dLng/2) * Math.sin(dLng/2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        double dist = (earthRadius * c);
+
+        return dist;
     }
 
     private void readLapData() throws IOException {
@@ -160,11 +198,17 @@ public class NikeActivityReader {
         if (trackPoints != null) {
             for (int i = 0; i < trackPoints.size(); i++) {
                 TrackPoint trackPoint = trackPoints.get(i);
-                if (trackPoint.getHeartRate().intValue() == 0) {
+                if (trackPoint.getHeartRate() == null || trackPoint.getHeartRate().intValue() == 0) {
                     final boolean isFirstPoint = i == 0;
                     final boolean isLastPoint = i == trackPoints.size() - 1;
-                    final int nextHeartRatePosition = getNextValidHeartRatePosition(i);
+                    // this fixes the heart rate, it the last one was broken
+                    if (isLastPoint) {
+                        trackPoint.setHeartRate(trackPoints.get(i-1).getHeartRate());
+                        continue;
+                    }
 
+                    // this can fix heartrate if it is in the middle of the chain
+                    final int nextHeartRatePosition = getNextValidHeartRatePosition(i);
                     if (!isFirstPoint && !isLastPoint && nextHeartRatePosition != -1) {
                         int beatsMissing = nextHeartRatePosition - i;
                         int previousValidHeartRate = trackPoints.get(i - 1).getHeartRate();
@@ -182,9 +226,11 @@ public class NikeActivityReader {
     }
 
     private int getNextValidHeartRatePosition(int i) {
-        for (int j = i; j < trackPoints.size(); j++) {
-            if (trackPoints.get(j).getHeartRate() != 0) {
-                return j;
+        if (i < trackPoints.size() -1 ) {
+            for (int j = i; j < trackPoints.size(); j++) {
+                if (trackPoints.get(j).getHeartRate() != 0) {
+                    return j;
+                }
             }
         }
         return -1;
